@@ -234,6 +234,16 @@ function runBoot() {
 runBoot();
 initDock();
 
+// Click anywhere in the terminal → focus the email input. Feels like a real
+// terminal: you don't have to aim for the input field. No-op if the input
+// hasn't appeared yet (still booting) or is mid-submit (disabled).
+body.addEventListener('click', (e) => {
+  // Don't steal focus if the user clicked a link or the input itself.
+  if (e.target.closest('a')) return;
+  const input = document.getElementById('emailInput');
+  if (input && !input.disabled) input.focus();
+});
+
 // Language toggle (issue #15): if the user hasn't subscribed yet, replay the
 // boot sequence in the new language. If they have, leave their state intact
 // and just append a locale-change note.
