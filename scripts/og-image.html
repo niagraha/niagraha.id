@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1200px; height: 630px; overflow: hidden; }
+  body {
+    background: #181926;
+    background-image:
+      radial-gradient(circle at 20% 15%, rgba(239,159,118,0.08), transparent 40%),
+      radial-gradient(circle at 80% 85%, rgba(140,170,238,0.10), transparent 45%);
+    font-family: 'JetBrains Mono', 'Cascadia Code', ui-monospace, monospace;
+    color: #c6d0f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .window {
+    width: 1000px;
+    background: #303446;
+    border-radius: 12px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.04);
+    overflow: hidden;
+  }
+  .titlebar {
+    background: #232634;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .tab {
+    background: #a6d189;
+    color: #232634;
+    font-weight: 700;
+    font-size: 18px;
+    padding: 5px 16px;
+    border-radius: 4px;
+  }
+  .dots { margin-left: auto; display: flex; gap: 9px; }
+  .dot { width: 13px; height: 13px; border-radius: 50%; background: #626880; }
+  .dot.close { background: #e78284; }
+  .body { padding: 32px 36px 40px; font-size: 22px; line-height: 1.7; }
+  .prompt-user { color: #a6d189; }
+  .prompt-at, .prompt-sym { color: #a5adce; }
+  .prompt-host { color: #8caaee; }
+  .prompt-path { color: #99d1db; }
+  .cmd { color: #c6d0f5; }
+  .out { color: #a5adce; }
+  .comment { color: #737994; }
+  .accent { color: #ef9f76; }
+  .bold { font-weight: 700; }
+  .green { color: #a6d189; }
+  .headline { font-size: 30px; margin: 18px 0 10px; }
+  .caret {
+    display: inline-block; width: 11px; height: 22px;
+    background: #ef9f76; vertical-align: text-bottom; margin-left: 3px;
+  }
+  .bar-wrap { color: #a5adce; }
+  .bar-fill { color: #ef9f76; }
+</style>
+</head>
+<body>
+  <div class="window">
+    <div class="titlebar">
+      <div class="tab">● niagraha</div>
+      <div class="dots">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot close"></div>
+      </div>
+    </div>
+    <div class="body">
+      <div><span class="prompt-user">niagraha</span><span class="prompt-at">@</span><span class="prompt-host">boot</span><span class="prompt-sym">:</span><span class="prompt-path">~</span><span class="prompt-sym">$</span> <span class="cmd">systemctl status niagraha-website.service</span></div>
+      <div style="margin-top:8px"><span class="green">●</span> niagraha-website.service - Robotics Education Platform</div>
+      <div class="out" style="padding-left:20px">Active: <span class="accent">activating (start)</span> <span class="comment">since now</span></div>
+      <div style="margin-top:16px"><span class="prompt-user">niagraha</span><span class="prompt-at">@</span><span class="prompt-host">boot</span><span class="prompt-sym">:</span><span class="prompt-path">~</span><span class="prompt-sym">$</span> <span class="cmd">./deploy.sh --site niagraha.id</span></div>
+      <div style="margin-top:6px"><span class="bar-wrap">[<span class="bar-fill">########################</span>]</span> <span class="green">done</span></div>
+      <div class="headline"><span class="bold accent">Something's coming up.</span></div>
+      <div class="comment"># acrylic robot kits + ROS/ROS2 courses — built in Indonesia.</div>
+      <div style="margin-top:14px"><span class="prompt-user">you</span><span class="prompt-at">@</span><span class="prompt-host">niagraha</span><span class="prompt-sym">:</span><span class="prompt-path">~</span><span class="prompt-sym">$</span> <span class="cmd">notify --email</span> <span class="caret"></span></div>
+    </div>
+  </div>
+</body>
+</html>

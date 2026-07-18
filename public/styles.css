@@ -1,0 +1,589 @@
+/* ===================================================================
+   niagraha.id — coming-soon page styles
+   Palette: Catppuccin Frappé (do not swap)
+   Extracted verbatim from niagraha-coming-soon-base.html, then extended
+   with accessibility / fallback additions (clearly commented).
+   =================================================================== */
+
+:root {
+  /* Catppuccin Frappé — matched to your zellij/alacritty theme */
+  --term-bg: #303446;     /* base */
+  --term-bg-2: #232634;   /* crust */
+  --tab-bg: #292c3c;      /* mantle */
+  --fg: #c6d0f5;          /* text */
+  --fg-dim: #a5adce;      /* subtext0 */
+  --comment: #737994;     /* overlay0 */
+  --accent: #ef9f76;      /* peach */
+  --accent-dim: #b97c5c;
+  --green: #a6d189;
+  --pink: #f4b8e4;
+  --blue: #8caaee;
+  --sky: #99d1db;
+  --red: #e78284;
+  --yellow: #e5c890;
+  --surface2: #626880;
+  --err: #e78284;
+
+  /* Focus ring colors chosen for ≥3:1 contrast against --term-bg (#303446).
+     --accent (#ef9f76) on base → ratio ~3.4:1; the dark ring underneath
+     separates it from any underlying icon background. */
+  --focus-ring: var(--accent);
+  --focus-ring-gap: var(--term-bg-2);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: #181926; /* crust, darker surround */
+  background-image:
+    radial-gradient(circle at 20% 15%, rgba(239,159,118,0.05), transparent 40%),
+    radial-gradient(circle at 80% 85%, rgba(140,170,238,0.06), transparent 45%);
+  font-family: 'CaskaydiaMono Nerd Font', 'Cascadia Code', 'JetBrains Mono', monospace;
+  color: var(--fg);
+  overflow: hidden;
+}
+
+.desktop {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 24px 100px;
+  position: relative;
+}
+
+.window {
+  width: min(920px, 100%);
+  height: min(600px, 82vh);
+  background: var(--term-bg);
+  border-radius: 8px;
+  box-shadow:
+    0 30px 80px rgba(0,0,0,0.55),
+    0 0 0 1px rgba(255,255,255,0.04);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: bootIn 0.5s ease-out;
+}
+
+@keyframes bootIn {
+  from { opacity: 0; transform: scale(0.97) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.titlebar {
+  background: var(--term-bg-2);
+  padding: 9px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--green);
+  color: var(--term-bg-2);
+  font-weight: 700;
+  font-size: 12.5px;
+  padding: 4px 12px;
+  border-radius: 3px;
+  letter-spacing: 0.2px;
+}
+
+.tab-dim {
+  color: var(--comment);
+  font-size: 12.5px;
+  padding: 4px 10px;
+}
+
+.titlebar-tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.titlebar-controls {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--surface2);
+}
+.dot.close { background: var(--red); opacity: 0.8; }
+
+/* ---- Language toggle (issue #15) ---- */
+.lang-toggle {
+  display: inline-flex;
+  margin-left: 10px;
+  border: 1px solid rgba(198,208,245,0.12);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.lang-toggle button {
+  background: transparent;
+  border: none;
+  color: var(--fg-dim);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 7px;
+  cursor: pointer;
+  letter-spacing: 0.3px;
+}
+.lang-toggle button[aria-pressed="true"] {
+  background: var(--accent);
+  color: var(--term-bg-2);
+}
+
+.term-body {
+  flex: 1;
+  padding: 22px 26px;
+  overflow-y: auto;
+  font-size: 14.5px;
+  line-height: 1.65;
+  /* Issue #13: keep the subscribe row reachable above the dock when the
+     mobile keyboard appears. */
+  scroll-padding-bottom: 140px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-dim) transparent;
+}
+.term-body::-webkit-scrollbar { width: 6px; }
+.term-body::-webkit-scrollbar-thumb { background: var(--accent-dim); border-radius: 3px; }
+
+.line { white-space: pre-wrap; word-break: break-word; opacity: 0; animation: fadeIn 0.15s forwards; }
+@keyframes fadeIn { to { opacity: 1; } }
+
+.prompt-user { color: var(--green); }
+.prompt-at { color: var(--fg-dim); }
+.prompt-host { color: var(--blue); }
+.prompt-path { color: var(--sky); }
+.prompt-sym { color: var(--fg); }
+.cmd { color: var(--fg); }
+.out { color: var(--fg-dim); }
+.accent { color: var(--accent); }
+.purple { color: var(--pink); }
+.green { color: var(--green); }
+.comment { color: var(--comment); }
+.bold { font-weight: 700; }
+
+.bar-wrap { color: var(--fg-dim); }
+.bar-fill { color: var(--accent); }
+
+.caret {
+  display: inline-block;
+  width: 8px;
+  height: 16px;
+  background: var(--accent);
+  animation: blink 1s step-end infinite;
+  vertical-align: text-bottom;
+  margin-left: 2px;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+.subscribe-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+
+.fake-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--fg);
+  font-family: inherit;
+  font-size: 14.5px;
+  flex: 1;
+  min-width: 160px;
+  caret-color: var(--accent);
+}
+.fake-input::placeholder { color: var(--comment); }
+/* Issue #2/#3: visible focus for the email input. */
+.fake-input:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+.fake-input.is-loading { color: var(--accent); }
+.fake-input.is-success { color: var(--green); }
+.fake-input.is-error { color: var(--err); }
+
+.hint {
+  color: var(--comment);
+  font-size: 12.5px;
+  margin-top: 2px;
+}
+.hint.is-error { color: var(--err); }
+.hint.is-success { color: var(--green); }
+
+/* Spinner shown during submit. Spins only when motion is allowed. */
+.spinner {
+  display: inline-block;
+  color: var(--accent);
+  font-size: 14px;
+  line-height: 1;
+  animation: spin 0.9s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Honeypot (issue #10): visually hidden but fillable by bots.
+   Using clip keeps it in the layout for bots that scan the DOM; we do NOT
+   use display:none, which bots learn to skip. */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ===== macOS-style dock ===== */
+.dock-zone {
+  position: fixed;
+  left: 0;
+  right: 0;
+  /* Issue #13: env(safe-area-inset-bottom) keeps the dock off the home
+     indicator on notched phones; the max() floor preserves the original
+     14px on devices without a safe area. */
+  bottom: 0;
+  height: 110px;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 40;
+  opacity: 0;
+  transform: translateY(16px);
+  pointer-events: none;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.dock-zone.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.dock {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  padding: 10px 14px 8px;
+  margin-bottom: 14px;
+  border-radius: 20px;
+  background: rgba(41, 44, 60, 0.55);
+  border: 1px solid rgba(198, 208, 245, 0.08);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+/* Issue #6: solid opaque background when backdrop-filter is unsupported. */
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .dock { background: rgb(41, 44, 60); /* equivalent to var(--tab-bg) */ }
+}
+
+.dock-icon-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dock-icon {
+  width: 50px;
+  height: 50px;
+  border: none;
+  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transform-origin: bottom center;
+  transition: transform 0.12s ease-out;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.12);
+  flex-shrink: 0;
+  padding: 0;
+}
+.dock-icon svg { width: 26px; height: 26px; pointer-events: none; }
+
+/* Issue #2: visible keyboard focus ring on dock icons.
+   offset + gap color so the ring reads on any icon background. */
+.dock-icon:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+  box-shadow:
+    0 0 0 5px var(--focus-ring-gap),
+    0 4px 10px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.12);
+}
+
+.dock-icon.bounce { animation: dockBounce 0.42s cubic-bezier(.28,1.4,.5,1); }
+@keyframes dockBounce {
+  0%   { transform: translateY(0) scale(1); }
+  30%  { transform: translateY(-16px) scale(1.05); }
+  55%  { transform: translateY(0) scale(0.96); }
+  75%  { transform: translateY(-6px) scale(1.02); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+.dock-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--fg);
+  margin-top: 5px;
+  opacity: 0;
+}
+.dock-dot.on { opacity: 0.85; }
+
+.dock-tooltip {
+  position: absolute;
+  bottom: 100%;
+  margin-bottom: 10px;
+  background: var(--term-bg-2);
+  color: var(--fg);
+  font-size: 11.5px;
+  padding: 4px 9px;
+  border-radius: 5px;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  pointer-events: none;
+  border: 1px solid rgba(198,208,245,0.08);
+}
+/* Tooltip on hover OR keyboard focus (so keyboard users see the label too). */
+.dock-icon-wrap:hover .dock-tooltip,
+.dock-icon-wrap:focus-within .dock-tooltip {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ===== Panels (macOS-window style) ===== */
+.panel-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 10, 16, 0.35);
+  z-index: 45;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+.panel-backdrop.visible { opacity: 1; pointer-events: auto; }
+
+.panel {
+  position: fixed;
+  left: 50%;
+  /* Issue #13: lift the panel above the dock + safe-area on short viewports. */
+  bottom: calc(128px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%) translateY(16px) scale(0.9);
+  width: min(480px, 88vw);
+  max-height: 60vh;
+  background: var(--term-bg);
+  border-radius: 10px;
+  box-shadow: 0 30px 70px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.06);
+  z-index: 50;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s cubic-bezier(.2,.9,.3,1.2), transform 0.22s cubic-bezier(.2,.9,.3,1.2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.panel.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0) scale(1);
+  pointer-events: auto;
+}
+/* Issue #14: cross-fade when swapping panel bodies. */
+.panel-body.swapping { opacity: 0; transition: opacity 0.12s ease; }
+
+.panel-header {
+  background: var(--term-bg-2);
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.traffic {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  /* Issue #5: only red (close) is interactive — cursor narrowed below
+     to the .traffic.close selector. Yellow/green are decorative. */
+}
+.traffic.red,
+.traffic.close {
+  background: var(--red);
+  cursor: pointer;
+}
+.traffic.close:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+/* Issue #5: decorative dots — dimmed, no pointer affordance. */
+.traffic.yellow,
+.traffic.green {
+  background: var(--yellow);
+  opacity: 0.55;
+  cursor: default;
+}
+.traffic.green { background: var(--green); }
+
+.panel-title {
+  flex: 1;
+  text-align: center;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--fg-dim);
+  margin-right: 40px;
+}
+
+.panel-body {
+  padding: 18px 20px 20px;
+  overflow-y: auto;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--fg-dim);
+  transition: opacity 0.22s cubic-bezier(.2,.9,.3,1.2);
+  /* Keep tabbable links inside the panel reachable on short screens. */
+  scroll-padding-top: 8px;
+}
+.panel-body p { margin: 0 0 10px; }
+.panel-body p:last-child { margin-bottom: 0; }
+.panel-body strong { color: var(--fg); }
+.panel-body a { color: var(--sky); }
+.panel-body a:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+.panel-body .accent { color: var(--accent); }
+.panel-body .green { color: var(--green); }
+.panel-body .blue { color: var(--blue); }
+.panel-body .pink { color: var(--pink); }
+.panel-body .comment { color: var(--comment); font-size: 12px; }
+
+.ls-row {
+  display: grid;
+  grid-template-columns: 26px 130px 1fr;
+  gap: 4px;
+  font-size: 12.5px;
+  margin-bottom: 6px;
+  align-items: baseline;
+}
+.ls-perm { color: var(--comment); }
+.ls-name { color: var(--accent); font-weight: 700; }
+.ls-desc { color: var(--fg-dim); }
+
+.neofetch {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+}
+.neofetch pre {
+  color: var(--accent);
+  font-size: 11px;
+  line-height: 1.15;
+  margin: 0;
+}
+.neofetch .specs div { margin-bottom: 3px; font-size: 12.5px; }
+.neofetch .specs .label { color: var(--accent); font-weight: 700; }
+
+@media (max-width: 560px) {
+  .window { height: 78vh; border-radius: 0; }
+  .term-body { font-size: 13px; padding: 16px 16px; }
+  .dock-icon { width: 42px; height: 42px; }
+  .dock-icon svg { width: 22px; height: 22px; }
+  .panel { bottom: calc(110px + env(safe-area-inset-bottom, 0px)); width: 92vw; max-height: 65vh; }
+  .neofetch { flex-direction: column; gap: 10px; }
+}
+
+/* Issue #12: extend reduced-motion handling to dock magnification/bounce
+   and panel transitions. The base file already covers boot lines, caret,
+   window entrance, and bounce — we keep those and add magnification +
+   panel + spinner. */
+@media (prefers-reduced-motion: reduce) {
+  .line { animation: none; opacity: 1; }
+  .caret { animation: none; }
+  .window { animation: none; }
+  .dock-icon.bounce { animation: none; }
+  .dock-icon { transition: none; }
+  .panel { transition: opacity 0.01s, transform 0.01s; }
+  .spinner { animation: none; }
+}
+
+/* ===== <noscript> fallback (issue #4) ===== */
+.noscript-fallback {
+  max-width: 560px;
+  margin: 8vh auto;
+  padding: 28px 32px;
+  background: var(--term-bg);
+  color: var(--fg);
+  border-radius: 10px;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.04);
+  font-family: 'CaskaydiaMono Nerd Font', 'Cascadia Code', 'JetBrains Mono', monospace;
+}
+.noscript-fallback h1 {
+  margin: 0 0 6px;
+  font-size: 22px;
+  color: var(--accent);
+  font-weight: 700;
+}
+.noscript-fallback p { color: var(--fg-dim); line-height: 1.6; font-size: 14.5px; }
+.noscript-fallback form { margin-top: 18px; display: flex; gap: 8px; flex-wrap: wrap; }
+.noscript-fallback label { color: var(--green); font-size: 14.5px; }
+.noscript-fallback input[type="email"] {
+  flex: 1; min-width: 200px;
+  background: var(--term-bg-2);
+  border: 1px solid rgba(198,208,245,0.15);
+  color: var(--fg);
+  font-family: inherit;
+  font-size: 14.5px;
+  padding: 8px 10px;
+  border-radius: 5px;
+  caret-color: var(--accent);
+}
+.noscript-fallback input[type="email"]:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+.noscript-fallback button {
+  background: var(--accent);
+  color: var(--term-bg-2);
+  border: none;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.noscript-fallback button:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 2px;
+}
+.noscript-fallback .contact { margin-top: 22px; color: var(--comment); font-size: 13px; }
+.noscript-fallback .contact a { color: var(--sky); }

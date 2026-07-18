@@ -4,7 +4,7 @@
   "type": "module",
   "description": "Coming-soon landing page for niagraha.id (robotics education, Indonesia).",
   "scripts": {
-    "test": "node --test api/",
+    "test": "node --test --test-name-pattern='.*' 'api/**/*.test.ts'",
     "typecheck": "tsc --noEmit",
     "dev": "vercel dev"
   },
