@@ -9,7 +9,7 @@
  * handles before deploy. Kept here so there's exactly one place to edit.
  */
 export const CONTACT = {
-  email: 'hello@niagraha.id',
+  email: 'billy.nugraha.s@gmail.com',
   instagram: '@niagraha.id',
   country: 'Indonesia',
 };
