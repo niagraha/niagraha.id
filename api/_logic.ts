@@ -10,8 +10,8 @@ import {
   isDuplicateContactError,
   isValidEmail,
   normalizeEmail,
-} from './_validation.ts';
-import { RateLimiter } from './_rateLimit.ts';
+} from './_validation.js';
+import { RateLimiter } from './_rateLimit.js';
 
 /** Subset of the Resend SDK we depend on. */
 export interface ResendLike {

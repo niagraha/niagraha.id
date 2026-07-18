@@ -6,11 +6,11 @@
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { handleSubscribe, type SubscribeEnv } from './_logic.ts';
-import { makeFakeResend } from './_test-helpers.ts';
-import { RateLimiter } from './_rateLimit.ts';
-import { isValidEmail, isDuplicateContactError, normalizeEmail, EMAIL_MAX_LENGTH } from './_validation.ts';
-import { readSubscribePayload, BodyError } from './_body.ts';
+import { handleSubscribe, type SubscribeEnv } from './_logic.js';
+import { makeFakeResend } from './_test-helpers.js';
+import { RateLimiter } from './_rateLimit.js';
+import { isValidEmail, isDuplicateContactError, normalizeEmail, EMAIL_MAX_LENGTH } from './_validation.js';
+import { readSubscribePayload, BodyError } from './_body.js';
 
 const PROD_ENV: SubscribeEnv = {
   RESEND_API_KEY: 're_test_key',

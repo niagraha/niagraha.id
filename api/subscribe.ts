@@ -20,8 +20,8 @@ import {
   createRateLimiter,
   handleSubscribe,
   type ResendLike,
-} from './_logic.ts';
-import { readSubscribePayload, BodyError } from './_body.ts';
+} from './_logic.js';
+import { readSubscribePayload, BodyError } from './_body.js';
 
 // Module-scoped so it survives warm invocations of the same instance.
 const rateLimiter = createRateLimiter();

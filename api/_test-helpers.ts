@@ -4,7 +4,7 @@
  * node:test + node:assert — no extra test framework dependency.
  */
 
-import type { ResendLike } from './_logic.ts';
+import type { ResendLike } from './_logic.js';
 
 /** Records every call so tests can assert on them. */
 export function makeFakeResend(opts: {

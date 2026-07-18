@@ -4,7 +4,7 @@
   "type": "module",
   "description": "Coming-soon landing page for niagraha.id (robotics education, Indonesia).",
   "scripts": {
-    "test": "node --test --test-name-pattern='.*' 'api/**/*.test.ts'",
+    "test": "tsx --test api/**/*.test.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -13,6 +13,7 @@
   "devDependencies": {
     "@types/node": "^22.0.0",
     "@vercel/node": "^5.0.0",
+    "tsx": "^4.23.1",
     "typescript": "^5.0.0"
   },
   "engines": {
