@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>niagraha — booting</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* Catppuccin Frappé — matched to your zellij/alacritty theme */
+    --term-bg: #303446;     /* base */
+    --term-bg-2: #232634;   /* crust */
+    --tab-bg: #292c3c;      /* mantle */
+    --fg: #c6d0f5;          /* text */
+    --fg-dim: #a5adce;      /* subtext0 */
+    --comment: #737994;     /* overlay0 */
+    --accent: #ef9f76;      /* peach */
+    --accent-dim: #b97c5c;
+    --green: #a6d189;
+    --pink: #f4b8e4;
+    --blue: #8caaee;
+    --sky: #99d1db;
+    --red: #e78284;
+    --yellow: #e5c890;
+    --surface2: #626880;
+    --err: #e78284;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: #181926; /* crust, darker surround */
+    background-image:
+      radial-gradient(circle at 20% 15%, rgba(239,159,118,0.05), transparent 40%),
+      radial-gradient(circle at 80% 85%, rgba(140,170,238,0.06), transparent 45%);
+    font-family: 'CaskaydiaMono Nerd Font', 'Cascadia Code', 'JetBrains Mono', monospace;
+    color: var(--fg);
+    overflow: hidden;
+  }
+
+  .desktop {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 24px 100px;
+    position: relative;
+  }
+
+  .window {
+    width: min(920px, 100%);
+    height: min(600px, 82vh);
+    background: var(--term-bg);
+    border-radius: 8px;
+    box-shadow:
+      0 30px 80px rgba(0,0,0,0.55),
+      0 0 0 1px rgba(255,255,255,0.04);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: bootIn 0.5s ease-out;
+  }
+
+  @keyframes bootIn {
+    from { opacity: 0; transform: scale(0.97) translateY(8px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .titlebar {
+    background: var(--term-bg-2);
+    padding: 9px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--green);
+    color: var(--term-bg-2);
+    font-weight: 700;
+    font-size: 12.5px;
+    padding: 4px 12px;
+    border-radius: 3px;
+    letter-spacing: 0.2px;
+  }
+
+  .tab-dim {
+    color: var(--comment);
+    font-size: 12.5px;
+    padding: 4px 10px;
+  }
+
+  .titlebar-tabs {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .titlebar-controls {
+    display: flex;
+    gap: 7px;
+  }
+
+  .dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--surface2);
+  }
+  .dot.close { background: var(--red); opacity: 0.8; }
+
+  .term-body {
+    flex: 1;
+    padding: 22px 26px;
+    overflow-y: auto;
+    font-size: 14.5px;
+    line-height: 1.65;
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent-dim) transparent;
+  }
+  .term-body::-webkit-scrollbar { width: 6px; }
+  .term-body::-webkit-scrollbar-thumb { background: var(--accent-dim); border-radius: 3px; }
+
+  .line { white-space: pre-wrap; word-break: break-word; opacity: 0; animation: fadeIn 0.15s forwards; }
+  @keyframes fadeIn { to { opacity: 1; } }
+
+  .prompt-user { color: var(--green); }
+  .prompt-at { color: var(--fg-dim); }
+  .prompt-host { color: var(--blue); }
+  .prompt-path { color: var(--sky); }
+  .prompt-sym { color: var(--fg); }
+  .cmd { color: var(--fg); }
+  .out { color: var(--fg-dim); }
+  .accent { color: var(--accent); }
+  .purple { color: var(--pink); }
+  .green { color: var(--green); }
+  .comment { color: var(--comment); }
+  .bold { font-weight: 700; }
+
+  .bar-wrap { color: var(--fg-dim); }
+  .bar-fill { color: var(--accent); }
+
+  .caret {
+    display: inline-block;
+    width: 8px;
+    height: 16px;
+    background: var(--accent);
+    animation: blink 1s step-end infinite;
+    vertical-align: text-bottom;
+    margin-left: 2px;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .subscribe-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+  }
+
+  .fake-input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--fg);
+    font-family: inherit;
+    font-size: 14.5px;
+    flex: 1;
+    min-width: 160px;
+    caret-color: var(--accent);
+  }
+  .fake-input::placeholder { color: var(--comment); }
+
+  .hint {
+    color: var(--comment);
+    font-size: 12.5px;
+    margin-top: 2px;
+  }
+
+  .subscribed { color: var(--green); }
+
+  /* ===== macOS-style dock ===== */
+  .dock-zone {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 110px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    z-index: 40;
+    opacity: 0;
+    transform: translateY(16px);
+    pointer-events: none;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .dock-zone.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .dock {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    padding: 10px 14px 8px;
+    margin-bottom: 14px;
+    border-radius: 20px;
+    background: rgba(41, 44, 60, 0.55);
+    border: 1px solid rgba(198, 208, 245, 0.08);
+    backdrop-filter: blur(18px) saturate(160%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.05);
+  }
+
+  .dock-icon-wrap {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .dock-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transform-origin: bottom center;
+    transition: transform 0.12s ease-out;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.12);
+    flex-shrink: 0;
+  }
+  .dock-icon svg { width: 26px; height: 26px; }
+
+  .dock-icon.bounce { animation: dockBounce 0.42s cubic-bezier(.28,1.4,.5,1); }
+  @keyframes dockBounce {
+    0%   { transform: translateY(0) scale(1); }
+    30%  { transform: translateY(-16px) scale(1.05); }
+    55%  { transform: translateY(0) scale(0.96); }
+    75%  { transform: translateY(-6px) scale(1.02); }
+    100% { transform: translateY(0) scale(1); }
+  }
+
+  .dock-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--fg);
+    margin-top: 5px;
+    opacity: 0;
+  }
+  .dock-dot.on { opacity: 0.85; }
+
+  .dock-tooltip {
+    position: absolute;
+    bottom: 100%;
+    margin-bottom: 10px;
+    background: var(--term-bg-2);
+    color: var(--fg);
+    font-size: 11.5px;
+    padding: 4px 9px;
+    border-radius: 5px;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    pointer-events: none;
+    border: 1px solid rgba(198,208,245,0.08);
+  }
+  .dock-icon-wrap:hover .dock-tooltip {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ===== Panels (macOS-window style) ===== */
+  .panel-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 10, 16, 0.35);
+    z-index: 45;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+  .panel-backdrop.visible { opacity: 1; pointer-events: auto; }
+
+  .panel {
+    position: fixed;
+    left: 50%;
+    bottom: 128px;
+    transform: translateX(-50%) translateY(16px) scale(0.9);
+    width: min(480px, 88vw);
+    max-height: 60vh;
+    background: var(--term-bg);
+    border-radius: 10px;
+    box-shadow: 0 30px 70px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.06);
+    z-index: 50;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s cubic-bezier(.2,.9,.3,1.2), transform 0.22s cubic-bezier(.2,.9,.3,1.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .panel.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+    pointer-events: auto;
+  }
+
+  .panel-header {
+    background: var(--term-bg-2);
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .traffic {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+  }
+  .traffic.red { background: var(--red); }
+  .traffic.yellow { background: var(--yellow); }
+  .traffic.green { background: var(--green); }
+
+  .panel-title {
+    flex: 1;
+    text-align: center;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--fg-dim);
+    margin-right: 40px;
+  }
+
+  .panel-body {
+    padding: 18px 20px 20px;
+    overflow-y: auto;
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--fg-dim);
+  }
+  .panel-body strong { color: var(--fg); }
+  .panel-body .accent { color: var(--accent); }
+  .panel-body .green { color: var(--green); }
+  .panel-body .blue { color: var(--blue); }
+  .panel-body .pink { color: var(--pink); }
+  .panel-body .comment { color: var(--comment); font-size: 12px; }
+
+  .ls-row {
+    display: grid;
+    grid-template-columns: 26px 130px 1fr;
+    gap: 4px;
+    font-size: 12.5px;
+    margin-bottom: 6px;
+    align-items: baseline;
+  }
+  .ls-perm { color: var(--comment); }
+  .ls-name { color: var(--accent); font-weight: 700; }
+  .ls-desc { color: var(--fg-dim); }
+
+  .neofetch {
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+  }
+  .neofetch pre {
+    color: var(--accent);
+    font-size: 11px;
+    line-height: 1.15;
+    margin: 0;
+  }
+  .neofetch .specs div { margin-bottom: 3px; font-size: 12.5px; }
+  .neofetch .specs .label { color: var(--accent); font-weight: 700; }
+
+  @media (max-width: 560px) {
+    .window { height: 78vh; border-radius: 0; }
+    .term-body { font-size: 13px; padding: 16px 16px; }
+    .dock-icon { width: 42px; height: 42px; }
+    .dock-icon svg { width: 22px; height: 22px; }
+    .panel { bottom: 110px; width: 92vw; max-height: 65vh; }
+    .neofetch { flex-direction: column; gap: 10px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .line { animation: none; opacity: 1; }
+    .caret { animation: none; }
+    .window { animation: none; }
+    .dock-icon.bounce { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="desktop">
+  <div class="window">
+    <div class="titlebar">
+      <div class="titlebar-tabs">
+        <div class="tab">● niagraha</div>
+        <div class="tab-dim">2</div>
+        <div class="tab-dim">3</div>
+      </div>
+      <div class="titlebar-controls">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot close"></div>
+      </div>
+    </div>
+    <div class="term-body" id="termBody"></div>
+  </div>
+</div>
+
+<div class="panel-backdrop" id="panelBackdrop"></div>
+<div class="panel" id="panel">
+  <div class="panel-header">
+    <button class="traffic red" id="panelClose"></button>
+    <div class="traffic yellow"></div>
+    <div class="traffic green"></div>
+    <div class="panel-title" id="panelTitle"></div>
+  </div>
+  <div class="panel-body" id="panelBody"></div>
+</div>
+
+<div class="dock-zone" id="dockZone">
+  <div class="dock" id="dock">
+    <!-- icons injected by JS -->
+  </div>
+</div>
+
+<script>
+/* ---------- boot sequence ---------- */
+const body = document.getElementById('termBody');
+let delay = 0;
+
+function addLine(html, wait = 220) {
+  const div = document.createElement('div');
+  div.className = 'line';
+  div.innerHTML = html;
+  div.style.animationDelay = delay + 'ms';
+  body.appendChild(div);
+  delay += wait;
+  return div;
+}
+
+function scrollDown() { body.scrollTop = body.scrollHeight; }
+
+const script = [
+  () => addLine(`<span class="prompt-user">niagraha</span><span class="prompt-at">@</span><span class="prompt-host">boot</span><span class="prompt-sym">:</span><span class="prompt-path">~</span><span class="prompt-sym">$</span> <span class="cmd">systemctl status niagraha-website.service</span>`, 500),
+  () => addLine(`<span class="green">●</span> niagraha-website.service - Robotics Education Platform`, 260),
+  () => addLine(`     <span class="out">Loaded: loaded (/etc/niagraha/site.conf)</span>`, 180),
+  () => addLine(`     <span class="out">Active: </span><span class="accent">activating (start)</span> <span class="comment">since now</span>`, 380),
+  () => addLine(``, 200),
+  () => addLine(`<span class="prompt-user">niagraha</span><span class="prompt-at">@</span><span class="prompt-host">boot</span><span class="prompt-sym">:</span><span class="prompt-path">~</span><span class="prompt-sym">$</span> <span class="cmd">cat README.md</span>`, 450),
+  () => addLine(`<span class="out">Acrylic robot kits, ROS &amp; ROS2 courses, and hands-on</span>`, 160),
+  () => addLine(`<span class="out">robotics education — built in Indonesia, for Indonesian</span>`, 160),
+  () => addLine(`<span class="out">learners, from school age through professional level.</span>`, 220),
+  () => addLine(``, 200),
+  () => addLine(`<span class="prompt-user">niagraha</span><span class="prompt-at">@</span><span class="prompt-host">boot</span><span class="prompt-sym">:</span><span class="prompt-path">~</span><span class="prompt-sym">$</span> <span class="cmd">./deploy.sh --site niagraha.id</span>`, 450),
+  () => addLine(`<span class="bar-wrap">[<span class="bar-fill">##########</span>..........]</span> <span class="comment">building assets</span>`, 260),
+  () => addLine(`<span class="bar-wrap">[<span class="bar-fill">####################</span>..]</span> <span class="comment">provisioning courses</span>`, 260),
+  () => addLine(`<span class="bar-wrap">[<span class="bar-fill">########################</span>]</span> <span class="green">done</span>`, 340),
+  () => addLine(``, 220),
+  () => {
+    const d = addLine(`<span class="bold accent">Something's coming up.</span>`, 0);
+    d.style.fontSize = '17px';
+    return d;
+  },
+  () => addLine(`<span class="comment"># the site's still booting. leave your email and we'll ping you when it's live.</span>`, 400),
+  () => addLine(``, 150),
+  () => buildSubscribeLine(),
+];
+
+function buildSubscribeLine() {
+  const wrap = document.createElement('div');
+  wrap.className = 'line subscribe-row';
+  wrap.style.animationDelay = delay + 'ms';
+  wrap.innerHTML = `
+    <span class="prompt-user">you</span><span class="prompt-at">@</span><span class="prompt-host">niagraha</span><span class="prompt-sym">:</span><span class="prompt-path">~</span><span class="prompt-sym">$</span>
+    <span class="cmd">notify&nbsp;--email</span>
+    <input class="fake-input" id="emailInput" type="email" placeholder="you@example.com" autocomplete="email" />
+  `;
+  body.appendChild(wrap);
+  delay += 200;
+
+  const hint = document.createElement('div');
+  hint.className = 'line hint';
+  hint.style.animationDelay = delay + 'ms';
+  hint.textContent = 'press enter to subscribe';
+  body.appendChild(hint);
+
+  setTimeout(() => {
+    const input = document.getElementById('emailInput');
+    if (!input) return;
+    input.focus();
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const val = input.value.trim();
+        const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+        if (!valid) {
+          hint.textContent = 'that doesn\'t look like a valid email — try again';
+          hint.style.color = 'var(--err)';
+          return;
+        }
+        input.disabled = true;
+        input.style.color = 'var(--green)';
+        hint.textContent = `subscribed. we'll email ${val} when niagraha.id is live.`;
+        hint.className = 'line subscribed';
+      }
+    });
+  }, delay + 100);
+}
+
+let i = 0;
+function step() {
+  if (i < script.length) {
+    script[i]();
+    i++;
+    setTimeout(() => { scrollDown(); step(); }, 90);
+  } else {
+    scrollDown();
+    revealDock();
+  }
+}
+step();
+
+/* ---------- dock ---------- */
+const ICONS = [
+  {
+    id: 'about',
+    label: 'About',
+    color: '#8caaee',
+    svg: `<svg viewBox="0 0 24 24" fill="none" stroke="#232634" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01"/><path d="M11 12h1v5h1"/></svg>`,
+    title: 'About Niagraha',
+    body: `
+      <p><strong>Niagraha</strong> is a robotics education venture based in Indonesia — acrylic robot frames and hands-on courses for learners from school age through professional level.</p>
+      <p>The idea is simple: robotics education shouldn't only exist behind expensive imported kits or English-only material. We're building the Indonesian-language, Indonesia-priced version.</p>
+      <p class="comment"># run by an engineer who spends the rest of the week integrating autonomous robot fleets — this is the after-hours project.</p>
+    `
+  },
+  {
+    id: 'courses',
+    label: 'Courses & Kits',
+    color: '#a6d189',
+    svg: `<svg viewBox="0 0 24 24" fill="none" stroke="#232634" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c0 1.5 3 3 6 3s6-1.5 6-3v-5"/></svg>`,
+    title: 'ls -la ./courses',
+    body: `
+      <div class="ls-row"><span class="ls-perm">d</span><span class="ls-name">starter-kit/</span><span class="ls-desc">Acrylic robot frame — build your first robot</span></div>
+      <div class="ls-row"><span class="ls-perm">d</span><span class="ls-name">ros-fundamentals/</span><span class="ls-desc">ROS / ROS2 basics for beginners</span></div>
+      <div class="ls-row"><span class="ls-perm">d</span><span class="ls-name">navigation-lab/</span><span class="ls-desc">Autonomous navigation &amp; mapping</span></div>
+      <div class="ls-row"><span class="ls-perm">d</span><span class="ls-name">pro-track/</span><span class="ls-desc">Advanced robotics for working engineers</span></div>
+      <p class="comment"># full syllabus and pricing land with the site launch.</p>
+    `
+  },
+  {
+    id: 'contact',
+    label: 'Contact / Socials',
+    color: '#f4b8e4',
+    svg: `<svg viewBox="0 0 24 24" fill="none" stroke="#232634" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg>`,
+    title: 'cat contact.txt',
+    body: `
+      <p><span class="accent">email</span>&nbsp;&nbsp; hello@niagraha.id</p>
+      <p><span class="accent">based&nbsp;in</span>&nbsp; Indonesia</p>
+      <p><span class="accent">instagram</span> @niagraha.id</p>
+      <p class="comment"># placeholders — swap in your real handles before this goes live.</p>
+    `
+  },
+  {
+    id: 'system',
+    label: 'System Info',
+    color: '#ef9f76',
+    svg: `<svg viewBox="0 0 24 24" fill="none" stroke="#232634" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="1"/><path d="M8 20h8M12 16v4"/></svg>`,
+    title: 'neofetch',
+    body: `
+      <div class="neofetch">
+        <pre>   /\\\\
+  /  \\\\
+ / __ \\\\
+/_/  \\\\_\\\\
+ |    |
+ |____|</pre>
+        <div class="specs">
+          <div><span class="label">OS:</span> NiagrahaOS (pre-release)</div>
+          <div><span class="label">Host:</span> niagraha.id</div>
+          <div><span class="label">Kernel:</span> robotics-edu 0.1.0</div>
+          <div><span class="label">Uptime:</span> preparing since 2026</div>
+          <div><span class="label">Packages:</span> 4 (courses)</div>
+          <div><span class="label">Shell:</span> ROS / ROS2</div>
+          <div><span class="label">Theme:</span> Catppuccin Frappé</div>
+          <div><span class="label">Status:</span> <span class="green">booting…</span></div>
+        </div>
+      </div>
+    `
+  }
+];
+
+const dock = document.getElementById('dock');
+const dockZone = document.getElementById('dockZone');
+const panel = document.getElementById('panel');
+const panelBackdrop = document.getElementById('panelBackdrop');
+const panelTitle = document.getElementById('panelTitle');
+const panelBody = document.getElementById('panelBody');
+const panelClose = document.getElementById('panelClose');
+
+let openId = null;
+
+ICONS.forEach(item => {
+  const wrap = document.createElement('div');
+  wrap.className = 'dock-icon-wrap';
+  wrap.innerHTML = `
+    <div class="dock-tooltip">${item.label}</div>
+    <div class="dock-icon" data-id="${item.id}" style="background:${item.color}">${item.svg}</div>
+    <div class="dock-dot" id="dot-${item.id}"></div>
+  `;
+  dock.appendChild(wrap);
+
+  const iconEl = wrap.querySelector('.dock-icon');
+  iconEl.addEventListener('click', () => togglePanel(item));
+});
+
+function togglePanel(item) {
+  const iconEl = dock.querySelector(`.dock-icon[data-id="${item.id}"]`);
+  iconEl.classList.remove('bounce');
+  void iconEl.offsetWidth;
+  iconEl.classList.add('bounce');
+
+  if (openId === item.id) {
+    closePanel();
+    return;
+  }
+  openId = item.id;
+  document.querySelectorAll('.dock-dot').forEach(d => d.classList.remove('on'));
+  document.getElementById('dot-' + item.id).classList.add('on');
+
+  panelTitle.textContent = item.title;
+  panelBody.innerHTML = item.body;
+  panel.classList.add('visible');
+  panelBackdrop.classList.add('visible');
+}
+
+function closePanel() {
+  openId = null;
+  panel.classList.remove('visible');
+  panelBackdrop.classList.remove('visible');
+  document.querySelectorAll('.dock-dot').forEach(d => d.classList.remove('on'));
+}
+
+panelClose.addEventListener('click', closePanel);
+panelBackdrop.addEventListener('click', closePanel);
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePanel(); });
+
+function revealDock() {
+  dockZone.classList.add('visible');
+}
+
+/* macOS-style magnification on hover (skipped on touch devices) */
+const isTouch = window.matchMedia('(hover: none)').matches;
+if (!isTouch) {
+  dock.addEventListener('mousemove', (e) => {
+    const icons = dock.querySelectorAll('.dock-icon');
+    icons.forEach(icon => {
+      const rect = icon.getBoundingClientRect();
+      const center = rect.left + rect.width / 2;
+      const dist = Math.abs(e.clientX - center);
+      const maxDist = 110;
+      const maxScale = 1.55;
+      let scale = 1;
+      if (dist < maxDist) {
+        scale = 1 + (maxScale - 1) * (1 - dist / maxDist);
+      }
+      icon.style.transform = `scale(${scale}) translateY(${(scale - 1) * -14}px)`;
+    });
+  });
+  dock.addEventListener('mouseleave', () => {
+    dock.querySelectorAll('.dock-icon').forEach(icon => {
+      icon.style.transform = 'scale(1) translateY(0)';
+    });
+  });
+}
+</script>
+
+</body>
+</html>

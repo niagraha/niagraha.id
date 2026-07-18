@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# No sitemap yet — the full site hasn't launched.
+# When it does, add: Sitemap: https://niagraha.id/sitemap.xml

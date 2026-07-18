@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>niagraha — booting</title>
+
+<!-- Issue #7: meta / social preview -->
+<meta name="description" content="niagraha — acrylic robot kits and ROS / ROS2 courses, built in Indonesia for Indonesian learners. The site is booting. Leave your email and we'll ping you when it's live.">
+<meta name="theme-color" content="#303446">
+<meta name="color-scheme" content="dark">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="niagraha">
+<meta property="og:title" content="niagraha — booting">
+<meta property="og:description" content="Acrylic robot kits and ROS / ROS2 courses, built in Indonesia for Indonesian learners. Leave your email and we'll ping you at launch.">
+<meta property="og:url" content="https://niagraha.id/">
+<meta property="og:image" content="https://niagraha.id/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="niagraha — a terminal boot sequence announcing a robotics education platform.">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="niagraha — booting">
+<meta name="twitter:description" content="Acrylic robot kits and ROS / ROS2 courses, built in Indonesia for Indonesian learners.">
+<meta name="twitter:image" content="https://niagraha.id/og-image.png">
+
+<!-- Icons (custom SVG, no Apple/Ubuntu/Canonical marks) -->
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="mask-icon" href="/favicon.svg" color="#ef9f76">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<!-- Issue #9: Vercel Analytics. Harmless if Analytics isn't enabled yet. -->
+<script defer src="/_vercel/insights/script.js"></script>
+
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<div class="desktop">
+  <div class="window">
+    <div class="titlebar">
+      <div class="titlebar-tabs">
+        <div class="tab">● niagraha</div>
+        <div class="tab-dim">2</div>
+        <div class="tab-dim">3</div>
+        <div class="lang-toggle" role="group" aria-label="Language">
+          <button type="button" id="langEn" aria-pressed="true">EN</button>
+          <button type="button" id="langId" aria-pressed="false">ID</button>
+        </div>
+      </div>
+      <div class="titlebar-controls">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot close"></div>
+      </div>
+    </div>
+    <div class="term-body" id="termBody" tabindex="0">
+      <!-- boot lines, subscribe row, and hint are injected by boot.js -->
+    </div>
+  </div>
+</div>
+
+<div class="panel-backdrop" id="panelBackdrop"></div>
+<div class="panel" id="panel" role="dialog" aria-modal="true" aria-labelledby="panelTitle" tabindex="-1">
+  <div class="panel-header">
+    <button type="button" class="traffic close" id="panelClose" aria-label="Close panel"></button>
+    <div class="traffic yellow" aria-hidden="true"></div>
+    <div class="traffic green" aria-hidden="true"></div>
+    <div class="panel-title" id="panelTitle"></div>
+  </div>
+  <div class="panel-body" id="panelBody"></div>
+</div>
+
+<div class="dock-zone" id="dockZone">
+  <div class="dock" id="dock">
+    <!-- icons injected by dock.js -->
+  </div>
+</div>
+
+<!-- Issue #4: no-JS fallback. Pure HTML form that POSTs to the same backend. -->
+<noscript>
+  <div class="noscript-fallback">
+    <h1>niagraha</h1>
+    <p>Acrylic robot kits and ROS / ROS2 courses, built in Indonesia for Indonesian learners. The full site is coming soon.</p>
+    <form method="POST" action="/api/subscribe">
+      <label for="noscriptEmail">notify --email</label>
+      <input id="noscriptEmail" name="email" type="email" maxlength="254" inputmode="email" autocomplete="email" placeholder="you@example.com" required>
+      <!-- honeypot (issue #10): real users never fill this. -->
+      <input class="visually-hidden" name="company" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <button type="submit">subscribe</button>
+    </form>
+    <p class="contact">email: <a href="mailto:billy.nugraha.s@gmail.com">billy.nugraha.s@gmail.com</a></p>
+  </div>
+</noscript>
+
+<script type="module" src="/i18n.js"></script>
+<script type="module" src="/boot.js"></script>
+</body>
+</html>

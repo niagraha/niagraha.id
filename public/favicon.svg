@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="niagraha">
+  <!-- Custom terminal mark. No Apple/Ubuntu/Canonical iconography.
+       Palette: Catppuccin Frappé (matches the page). -->
+  <rect width="64" height="64" rx="14" fill="#303446"/>
+  <!-- titlebar strip -->
+  <rect x="0" y="0" width="64" height="14" rx="14" fill="#232634"/>
+  <rect x="0" y="8" width="64" height="6" fill="#232634"/>
+  <!-- the "● niagraha" green tab dot -->
+  <circle cx="11" cy="7" r="3" fill="#a6d189"/>
+  <!-- terminal prompt: > _ -->
+  <path d="M16 30 L26 38 L16 46" fill="none" stroke="#ef9f76" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="30" y="43" width="16" height="3.5" rx="1.75" fill="#ef9f76"/>
+</svg>

@@ -1,0 +1,22 @@
+{
+  "name": "niagraha",
+  "private": true,
+  "type": "module",
+  "description": "Coming-soon landing page for niagraha.id (robotics education, Indonesia).",
+  "scripts": {
+    "test": "tsx --test api/**/*.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "resend": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@vercel/node": "^5.0.0",
+    "tsx": "^4.23.1",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
