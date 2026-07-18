@@ -37,7 +37,7 @@ vercel.json          # function runtime + same-origin CORS
 
 ```bash
 npm install
-npm run dev          # `vercel dev` — needs the Vercel CLI + login
+vercel dev --listen 4517   # needs the Vercel CLI + login
 ```
 
 If you don't have the Vercel CLI and just want to preview the static page:
@@ -58,6 +58,7 @@ npm test             # node:test — 31 cases covering validation, rate limit,
                      # body parsing, honeypot, Resend forwarding, duplicates,
                      # and end-to-end (JSON + urlencoded) paths.
 npm run typecheck    # tsc --noEmit over api/*.ts
+vercel dev           # full-stack local preview (needs Vercel CLI + login)
 ```
 
 ## Environment variables (set in Vercel Project Settings)
