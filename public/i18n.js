@@ -29,11 +29,9 @@ const STRINGS = {
     'boot.line.readme2': '<span class="out">robotics education — built in Indonesia, for Indonesian</span>',
     'boot.line.readme3': '<span class="out">learners, from school age through professional level.</span>',
     'boot.cmd.deploy': './deploy.sh --site niagraha.id',
-    // Progress bar phase labels — rendered by addProgressBar() in boot.js,
-    // which animates a single bar 0→100% and swaps the label at thresholds.
-    'boot.bar.phase1': 'building assets',
-    'boot.bar.phase2': 'provisioning courses',
-    'boot.bar.done': 'done',
+    'boot.line.bar1': '<span class="bar-wrap">[<span class="bar-fill">##########</span>..........]</span> <span class="comment">building assets</span>',
+    'boot.line.bar2': '<span class="bar-wrap">[<span class="bar-fill">####################</span>..]</span> <span class="comment">provisioning courses</span>',
+    'boot.line.bar3': '<span class="bar-wrap">[<span class="bar-fill">########################</span>]</span> <span class="green">done</span>',
     'boot.line.headline': '<span class="bold accent">Something\'s coming up.</span>',
     'boot.line.subhead': '<span class="comment"># the site\'s still booting. leave your email and we\'ll ping you when it\'s live.</span>',
 
@@ -115,9 +113,9 @@ const STRINGS = {
     'boot.line.readme2': '<span class="out">robotika langsung — dibuat di Indonesia, untuk pembelajar</span>',
     'boot.line.readme3': '<span class="out">Indonesia, dari usia sekolah hingga tingkat profesional.</span>',
     'boot.cmd.deploy': './deploy.sh --site niagraha.id',
-    'boot.bar.phase1': 'membangun aset',
-    'boot.bar.phase2': 'menyiapkan kursus',
-    'boot.bar.done': 'selesai',
+    'boot.line.bar1': '<span class="bar-wrap">[<span class="bar-fill">##########</span>..........]</span> <span class="comment">membangun aset</span>',
+    'boot.line.bar2': '<span class="bar-wrap">[<span class="bar-fill">####################</span>..]</span> <span class="comment">menyiapkan kursus</span>',
+    'boot.line.bar3': '<span class="bar-wrap">[<span class="bar-fill">########################</span>]</span> <span class="green">selesai</span>',
     'boot.line.headline': '<span class="bold accent">Sesuatu sedang datang.</span>',
     'boot.line.subhead': '<span class="comment"># situs masih booting. tinggalkan email Anda dan kami kabari saat sudah live.</span>',
 
