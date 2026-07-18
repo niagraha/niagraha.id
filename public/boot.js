@@ -105,11 +105,15 @@ function buildSubscribeLine() {
 
   // Focus the input shortly after it appears (mirrors the original timing).
   const focusTimer = setTimeout(() => {
+    const input = wrap.querySelector('#emailInput');
     initSubscribe({
-      input: wrap.querySelector('#emailInput'),
+      input,
       hint,
       honeypot: wrap.querySelector('input[name="company"]'),
     });
+    // Auto-focus so the user can start typing immediately, like a real
+    // terminal — no click needed. (Restored from the base file.)
+    input?.focus();
   }, delay + 100);
   stepTimers.push(focusTimer);
 }
